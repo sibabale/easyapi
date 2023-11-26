@@ -21,8 +21,7 @@ class Project extends Model
     // Define relationships if needed
     public function user()
     {
-        return $this->belongsTo(
-            ::class);
+        return $this->belongsTo(UserModel::class);
     }
 
     public function endpoints()
