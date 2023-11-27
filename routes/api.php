@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\EndpointsController;
+use App\Http\Controllers\EndpointFieldController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,8 +41,14 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
 
     // Endpoints
     Route::get('/projects/{projectId}/endpoints', [EndpointsController::class, 'index'])->name('endpoints.index');
+    Route::put('/projects/{projectId}/endpoints', [EndpointsController::class, 'update'])->name('endpoints.update');
     Route::get('projects/{projectId}/endpoints/{endpointId}', [EndpointsController::class, 'show'])->name('endpoints.show');
     Route::post('/projects/{projectId}/endpoints', [EndpointsController::class, 'store'])->name('endpoints.store');
+
+    // Endpoint Fields
+    Route::put('/endpoints/fields', [EndpointFieldController::class, 'update'])->name('fields.update');
+    Route::post('/endpoints/fields', [EndpointFieldController::class, 'store'])->name('fields.store');
+
 });
 
 //App

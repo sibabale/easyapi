@@ -6,8 +6,9 @@ namespace App\Http\Controllers;
 // use Inertia\Inertia;
 use App\Models\Project;
 use App\Models\Endpoint;
-use App\Models\EndpointField;
 use Illuminate\Http\Request;
+use App\Models\EndpointField;
+use App\Rules\UniqueJsonNameRule;
 
 class EndpointsController extends Controller
 {
@@ -60,15 +61,14 @@ class EndpointsController extends Controller
     {
 
         $request->validate([
-            'name' => 'required|string|max:255', // Assuming 'name' is the endpoint name
-            'fields' => 'required|array', // Assuming 'fields' is an array of field data
-            'project_id' => 'required|int',
+            'name' => 'required|string|max:255',
+            'fields' => ['required', 'array', new UniqueJsonNameRule],
         ]);
 
         // Create the endpoint
         $endpoint = Endpoint::create([
             'name' => $request->input('name'),
-            'project_id' => $request->input('project_id'),
+            'project_id' => $projectId,
         ]);
 
         // Save the fields for the endpoint
@@ -76,36 +76,28 @@ class EndpointsController extends Controller
         foreach ($fieldsData as $field) {
             EndpointField::create([
                 'endpoint_id' => $endpoint->id,
-                'field_attributes' => $field['field_attributes'], // Include field_attributes
+                'field_attributes' => $field,
             ]);
         }
 
         return response()->json(['message' => 'Endpoint created successfully']);
     }
 
-    public function update(Request $request, Endpoint $endpoint)
+    public function update(Request $request)
     {
-        // Validate the request data
-        $request->validate([
-            'endpoint_name' => 'required|string|max:255',
-            'fields' => 'required|array',
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'endpoint_id' => 'required|int',
         ]);
 
-        // Update the endpoint
-        $endpoint->update(['name' => $request->input('endpoint_name')]);
-
-        // Delete existing fields and create new ones
-        $endpoint->fields()->delete();
-        $fields = $request->input('fields');
-        foreach ($fields as $field) {
-            $endpoint->fields()->create([
-                'field_attributes' => $field,
-            ]);
-        }
+        $endpoint = Endpoint::findOrFail($request->input('endpoint_id'));
+        $endpoint->update($validatedData);
 
 
-        // Redirect or respond as needed
-        return redirect()->route('your.redirect.route');
+        return response()->json([
+            'endpoint' => $endpoint,
+            'message' => 'Endpoint update successfully'
+        ]);
     }
 
     public function destroy(Endpoint $endpoint)
