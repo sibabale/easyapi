@@ -46,8 +46,10 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::post('/projects/{projectId}/endpoints', [EndpointsController::class, 'store'])->name('endpoints.store');
 
     // Endpoint Fields
+    Route::get('/endpoints/fields', [EndpointFieldController::class, 'show'])->name('fields.show');
     Route::put('/endpoints/fields', [EndpointFieldController::class, 'update'])->name('fields.update');
     Route::post('/endpoints/fields', [EndpointFieldController::class, 'store'])->name('fields.store');
+    Route::delete('/endpoints/fields', [EndpointFieldController::class, 'destroy'])->name('fields.destroy');
 
 });
 

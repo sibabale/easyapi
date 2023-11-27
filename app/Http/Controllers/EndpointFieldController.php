@@ -75,13 +75,6 @@ class EndpointFieldController extends Controller
         ], 200);
     }
 
-
-    /**
-     * Store a newly created endpoint field.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function store(Request $request)
     {
         // Validate the store request data
@@ -124,5 +117,81 @@ class EndpointFieldController extends Controller
 
         return response()->json(['message' => 'Endpoint fields created successfully'], 201);
     }
+
+    public function show(Request $request)
+    {
+
+        $request->validate([
+            'field_id' => 'required|int',
+            'project_id' => 'required|int',
+            'endpoint_id' => 'required|int',
+        ]);
+
+        $fieldId = $request->input('field_id');
+        $projectId = $request->input('project_id');
+        $endpointId = $request->input('endpoint_id');
+
+        $user = Auth::user();
+
+        $project = Project::find($projectId);
+
+        if (!$project || $user->id !== $project->user_id) {
+            return response()->json(['error' => 'Unauthorized or Project not found'], 403);
+        }
+
+        $endpoint = Endpoint::where('project_id', $projectId)->find($endpointId);
+
+        if (!$endpoint) {
+            return response()->json(['error' => 'Endpoint not found or does not belong to the specified project'], 404);
+        }
+
+        $field = EndpointField::where('endpoint_id', $endpointId)->find($fieldId);
+
+        if (!$field) {
+            return response()->json(['error' => 'Field not found or does not belong to the specified endpoint'], 404);
+        }
+
+        return response()->json(['field' => $field], 200);
+    }
+
+    public function destroy(Request $request)
+    {
+
+        $request->validate([
+            'field_id' => 'required|int',
+            'project_id' => 'required|int',
+            'endpoint_id' => 'required|int',
+        ]);
+
+        $fieldId = $request->input('field_id');
+        $projectId = $request->input('project_id');
+        $endpointId = $request->input('endpoint_id');
+
+        $user = Auth::user();
+
+        $project = Project::find($projectId);
+
+        if (!$project || $user->id !== $project->user_id) {
+            return response()->json(['error' => 'Unauthorized or Project not found'], 403);
+        }
+
+        $endpoint = Endpoint::where('project_id', $projectId)->find($endpointId);
+
+        if (!$endpoint) {
+            return response()->json(['error' => 'Endpoint not found or does not belong to the specified project'], 404);
+        }
+
+        $field = EndpointField::where('endpoint_id', $endpointId)->find($fieldId);
+
+        if (!$field) {
+            return response()->json(['error' => 'Field not found or does not belong to the specified endpoint'], 404);
+        }
+
+        $field->delete();
+
+        return response()->json(['message' => 'Endpoint field deleted successfully'], 200);
+    }
+
+
 
 }
