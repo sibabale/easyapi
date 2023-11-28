@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\EndpointsController;
+use App\Http\Controllers\FieldValueController;
 use App\Http\Controllers\EndpointFieldController;
 
 /*
@@ -33,23 +34,29 @@ Route::post('/register', [AuthController::class, 'register']);
 
 Route::group(['middleware' => ['auth:sanctum']], function() {
     // Projects
-    Route::get('/projects', [ProjectController::class, 'index'])->name('projects.index');
-    Route::get('/projects/{id}', [ProjectController::class, 'show'])->name('projects.show');
-    Route::put('/projects/{id}', [ProjectController::class, 'update'])->name('projects.update');
-    Route::post('/projects', [ProjectController::class, 'store'])->name('projects.store');
-    Route::delete('/projects/{id}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+    Route::get('/projects', [ProjectController::class, 'index']);
+    Route::get('/projects/{id}', [ProjectController::class, 'show']);
+    Route::put('/projects/{id}', [ProjectController::class, 'update']);
+    Route::post('/projects', [ProjectController::class, 'store']);
+    Route::delete('/projects/{id}', [ProjectController::class, 'destroy']);
 
     // Endpoints
-    Route::get('/projects/{projectId}/endpoints', [EndpointsController::class, 'index'])->name('endpoints.index');
-    Route::put('/projects/{projectId}/endpoints', [EndpointsController::class, 'update'])->name('endpoints.update');
-    Route::get('projects/{projectId}/endpoints/{endpointId}', [EndpointsController::class, 'show'])->name('endpoints.show');
-    Route::post('/projects/{projectId}/endpoints', [EndpointsController::class, 'store'])->name('endpoints.store');
+    Route::get('/projects/{projectId}/endpoints', [EndpointsController::class, 'index']);
+    Route::put('/projects/{projectId}/endpoints', [EndpointsController::class, 'update']);
+    Route::get('projects/{projectId}/endpoints/{endpointId}', [EndpointsController::class, 'show']);
+    Route::post('/projects/{projectId}/endpoints', [EndpointsController::class, 'store']);
 
     // Endpoint Fields
-    Route::get('/endpoints/fields', [EndpointFieldController::class, 'show'])->name('fields.show');
-    Route::put('/endpoints/fields', [EndpointFieldController::class, 'update'])->name('fields.update');
-    Route::post('/endpoints/fields', [EndpointFieldController::class, 'store'])->name('fields.store');
-    Route::delete('/endpoints/fields', [EndpointFieldController::class, 'destroy'])->name('fields.destroy');
+    Route::get('/endpoints/fields', [EndpointFieldController::class, 'show']);
+    Route::put('/endpoints/fields', [EndpointFieldController::class, 'update']);
+    Route::post('/endpoints/fields', [EndpointFieldController::class, 'store']);
+    Route::delete('/endpoints/fields', [EndpointFieldController::class, 'destroy']);
+
+    // Field Values
+    Route::get('/endpoints/fields/value', [FieldValueController::class, 'show']);
+    Route::put('/endpoints/fields/value', [FieldValueController::class, 'update']);
+    Route::post('/endpoints/fields/value', [FieldValueController::class, 'store']);
+    Route::delete('/endpoints/fields/value', [FieldValueController::class, 'destroy']);
 
 });
 
