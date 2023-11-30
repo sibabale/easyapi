@@ -12,7 +12,11 @@ class ProjectController extends Controller
 
     public function index()
     {
-        $projects = Project::all();
+        // Get the authenticated user's ID
+        $userId = Auth::id();
+
+        // Fetch projects created by the authenticated user
+        $projects = Project::where('user_id', $userId)->get();
 
         return response()->json($projects);
 
@@ -36,7 +40,7 @@ class ProjectController extends Controller
             'name' => 'required|string',
             'description' => 'required|string',
             'api_version' => 'required|integer',
-            'api_type' => 'required|string',
+            'api_type' => 'required|in:GraphQL,Rest',
             'database' => 'required|string',
         ]);
 

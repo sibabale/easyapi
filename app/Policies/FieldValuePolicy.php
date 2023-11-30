@@ -7,11 +7,15 @@ use App\Models\FieldValue;
 
 class FieldValuePolicy
 {
-    public function create(User $user, FieldValue $fieldValue)
+    public function create(User $user, $data)
     {
+        // Extract the fieldValue from the data array
+        $fieldValue = $data['value'];
+
         // Checking if the user is allowed to create FieldValues and is the owner of the project associated with the FieldValue
         return $user->id === $fieldValue->endpointField->endpoint->project->user_id;
     }
+
 
     public function update(User $user, FieldValue $fieldValue)
     {

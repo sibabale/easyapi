@@ -11,6 +11,8 @@ use App\Rules\ValidFieldValueTypeRule;
 class FieldValueController extends Controller
 {
 
+
+
     private function findAndAuthorizeValue($valueId)
     {
         // Find the FieldValue by ID
@@ -22,10 +24,24 @@ class FieldValueController extends Controller
         return $value;
     }
 
+    public function index(Request $request)
+    {
+        // Authorize the user to view field values for the endpoint
+        // $this->authorize('view', $endpoint);
+
+        $endpoint = $request->input("endpoint_id");
+
+        // Get all field values for the given endpoint
+        $fieldValues = FieldValue::whereHas('endpointField', function ($query) use ($endpoint) {
+            $query->where('endpoint_id', $endpoint);
+        })->get();
+        return response()->json($fieldValues);
+    }
+
     public function store(Request $request)
     {
 
-        $this->authorize('create', FieldValue::class,  $request->input('value'));
+        // $this->authorize('create', FieldValue::class,  $request->input('value'));
 
         $request->validate([
             'project_id' => 'required|int',

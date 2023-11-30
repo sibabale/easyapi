@@ -100,13 +100,20 @@ class EndpointsController extends Controller
         ]);
     }
 
-    public function destroy(Endpoint $endpoint)
+    public function destroy(Request $request)
     {
+
+        $validatedData = $request->validate([
+            'endpoint_id' => 'required|int',
+        ]);
+
+        $endpoint = Endpoint::findOrFail($request->input('endpoint_id'));
         // Delete the endpoint and its associated fields
         $endpoint->fields()->delete();
         $endpoint->delete();
 
-        // Redirect or respond as needed
-        return redirect()->route('your.redirect.route');
+        return response()->json([
+            'message' => 'Endpoint deleted successfully'
+        ]);
     }
 }

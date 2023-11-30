@@ -19,6 +19,30 @@ class EndpointFieldController extends Controller
      * @param  Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
+    public function index(Request $request)
+    {
+        // Validate the request
+        $request->validate([
+            'endpoint_id' => 'required|integer|exists:endpoints,id',
+        ]);
+
+        // Get the authenticated user
+        $user = $request->user();
+
+        // Fetch the endpoint using the provided endpoint_id
+        $endpoint = Endpoint::findOrFail($request->input('endpoint_id'));
+
+        // Check if the user owns the project associated with the endpoint
+        if ($user->id !== $endpoint->project->user_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Fetch the fields for the given endpoint
+        $fields = EndpointField::where('endpoint_id', $endpoint->id)->get();
+
+        return response()->json($fields);
+    }
+
     public function update(Request $request)
     {
         // Validate the update request data
