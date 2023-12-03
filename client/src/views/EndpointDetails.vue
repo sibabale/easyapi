@@ -1,10 +1,11 @@
 <!-- ProjectDetails.vue -->
 <template>
   <div>
-    <div v-if="!endpointFields">
+    <div v-if="fetchingFields">
       <p>Loading...</p>
     </div>
 
+    <empty-state v-if="endpointFields.length <= 0" message="You have no fields for this endpoint" />
     <div class="my-5 rounded-lg border border-gray-200 shadow">
       <div class="p-4 flex items-center justify-between">
         <h2 class="text-xl font-bold">Endpoints Fields</h2>
@@ -37,7 +38,7 @@
           <tbody>
             <tr class="border-y last:border-b-0">
               <td class="py-2 px-4">
-                <input type="checkbox" class="border-red-300" :disabled="isLoading" />
+                <!-- <input type="checkbox" v-model="selectedFields" :value="endpointValue.id" /> -->
               </td>
               <td class="py-2 px-4" v-for="endpointValue in endpointValues" :key="endpointValue.id">
                 {{ endpointValue.value }}
@@ -52,16 +53,16 @@
 
 <script lang="ts" setup>
 import axios from 'axios'
-import { Project } from '../types'
 import { useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
 
 const route = useRoute()
 
 const isLoading = ref<boolean>(false)
-const endpointFields = ref<Project>([])
+const endpointFields = ref([])
 const endpointValues = ref<[]>([])
 const selectedFields = ref<number[]>([])
+const fetchingFields = ref<boolean>(true)
 
 onMounted(() => {
   fetchEndpointFields()
@@ -99,6 +100,7 @@ const fetchEndpointFields = async (): Promise<void> => {
       }
     })
     endpointFields.value = response.data
+    fetchingFields.value = false
   } catch (error) {
     console.error('Error fetching endpoint fields:', error.response.data)
   }

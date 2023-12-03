@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div v-if="projects.length > 0">
-      <h2 class="text-2xl mb-5 underline">Your Projects</h2>
-
-      <div class="my-5 rounded-lg border border-gray-200">
+    <div v-if="fetchingProjects">Loading...</div>
+    <div v-else>
+      <empty-state v-if="projects.length <= 0" message="You have no projects" />
+      <div v-else class="my-5 rounded-lg border border-gray-200">
         <div class="p-4 flex items-center justify-between">
           <h2 class="text-xl font-bold">Projects</h2>
-          <div v-show="projects.length > 0">
+          <div :class="selectedProjects.length <= 0 ? 'opacity-0' : ''">
             <button
               class="p-2 border border-red-500 flex items-center rounded text-red-500 text-sm"
               @click.prevent="deleteProjects"
@@ -37,7 +37,7 @@
                 <td class="py-2 px-4">
                   <input
                     type="checkbox"
-                    v-model="selectedEndpoints"
+                    v-model="selectedProjects"
                     :value="project.id"
                     class="border-red-300"
                     :disabled="isLoading"
@@ -73,10 +73,14 @@
 
 <script lang="ts" setup>
 import axios from 'axios'
+import EmptyState from '../components/EmptyState.vue'
 import { ref, onMounted } from 'vue'
+import type { Project } from '../types'
 
-const projects = ref([])
-const newProjectName = ref('')
+const projects = ref<Project[]>([])
+const newProjectName = ref<string>('')
+const selectedProjects = ref<number[]>([])
+const fetchingProjects = ref<boolean>(true)
 
 const fetchProjects = async () => {
   try {
@@ -88,6 +92,7 @@ const fetchProjects = async () => {
       }
     })
     projects.value = response.data
+    fetchingProjects.value = false
   } catch (error) {
     console.error('Error fetching projects:', error)
   }

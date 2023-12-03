@@ -1,7 +1,7 @@
 <!-- ProjectDetails.vue -->
 <template>
   <div>
-    <div v-if="!project">
+    <div v-if="isLoadingProject">
       <p>Loading...</p>
     </div>
     <div v-else>
@@ -22,10 +22,15 @@
           >Updated: {{ moment(project.project.updated_at).endOf('day').fromNow() }}</small
         >
       </div>
-      <div class="my-5 rounded-lg border border-gray-200">
+      <empty-state
+        v-if="project.project.endpoints <= 0"
+        message="You have no endpoints for this project"
+      />
+
+      <div v-else class="my-5 rounded-lg border border-gray-200">
         <div class="p-4 flex items-center justify-between">
           <h2 class="text-xl font-bold">Endpoints</h2>
-          <div v-show="selectedEndpoints.length > 0">
+          <div :class="selectedEndpoints.length <= 0 ? 'opacity-0' : ''">
             <button
               class="p-2 border border-red-500 flex items-center rounded text-red-500 text-sm"
               @click.prevent="deleteProjects"
@@ -58,13 +63,7 @@
                 :key="endpoint.id"
               >
                 <td class="py-2 px-4">
-                  <input
-                    type="checkbox"
-                    v-model="selectedEndpoints"
-                    :value="endpoint.id"
-                    class="border-red-300"
-                    :disabled="isLoading"
-                  />
+                  <input type="checkbox" v-model="selectedEndpoints" :value="endpoint.id" />
                 </td>
                 <td class="py-2 px-4">{{ endpoint.id }}</td>
 
@@ -79,7 +78,6 @@
                 <td class="py-2 px-4">
                   <div class="flex items-center">
                     <span class="mr-2">http://localhost:8000/api/{{ endpoint.name }}</span>
-                    <span class="material-symbols-outlined cursor-pointer"> content_copy </span>
                   </div>
                 </td>
                 <td class="py-2 px-4">GET</td>
@@ -98,19 +96,30 @@
 <script lang="ts" setup>
 import axios from 'axios'
 import moment from 'moment'
-import { Project } from '../types'
 import { useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
+
+import EmptyState from '../components/EmptyState.vue'
+import type { Project } from '../types'
 
 const route = useRoute()
 
 const project = ref<Project>(null)
+const isLoadingProject = ref<boolean>(true)
 const isLoading = ref<boolean>(false)
 const selectedEndpoints = ref<number[]>([])
-
 onMounted(() => fetchProjectDetails())
 
+const onCopy = (e: any) => {
+  alert('You just copied: ' + e.text)
+}
+
+const onError = (e) => {
+  alert('Failed to copy texts')
+}
+
 const fetchProjectDetails = async (): Promise<void> => {
+  isLoadingProject.value = true
   try {
     const response = await axios({
       url: `http://localhost:8000/api/projects/${route.params.id}`,
@@ -120,6 +129,7 @@ const fetchProjectDetails = async (): Promise<void> => {
       }
     })
     project.value = response.data
+    isLoadingProject.value = false
   } catch (error) {
     console.error('Error fetching project details:', error)
   }
