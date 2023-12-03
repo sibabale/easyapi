@@ -16,9 +16,8 @@
 </template>
 
 <script lang="ts">
+import axios from 'axios'
 import { defineComponent, ref } from 'vue'
-import api from '@/services/api'
-import { useAuthStore } from '@/stores/auth'
 
 export default defineComponent({
   setup() {
@@ -28,7 +27,10 @@ export default defineComponent({
 
     const login = async () => {
       try {
-        const response = await api.post('/login', { email: email.value, password: password.value })
+        const response = await axios.post('/login', {
+          email: email.value,
+          password: password.value
+        })
         const { user, token } = response.data
         authStore.setUser(user, token)
         // Redirect to dashboard or another route
