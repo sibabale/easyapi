@@ -30,13 +30,21 @@
       <div v-else class="my-5 rounded-lg border border-gray-200">
         <div class="p-4 flex items-center justify-between">
           <h2 class="text-xl font-bold">Endpoints</h2>
-          <div :class="selectedEndpoints.length <= 0 ? 'opacity-0' : ''">
+          <div class="flex items-center">
             <button
-              class="p-2 border border-red-500 flex items-center rounded text-red-500 text-sm"
+              :class="selectedEndpoints.length <= 0 ? 'opacity-0' : ''"
+              class="p-2 mr-5 border border-red-500 flex items-center rounded text-red-500 text-sm"
               @click.prevent="deleteProjects"
             >
               <span class="material-symbols-outlined text-sm text-red-500"> delete </span>
               Delete
+            </button>
+            <button
+              class="p-2 border border-blue-500 flex items-center rounded text-blue-500 text-sm"
+              @click.prevent="navigateToCreateEndpoint"
+            >
+              <span class="material-symbols-outlined text-sm text-blue-500"> add </span>
+              Add new endpoint
             </button>
           </div>
         </div>
@@ -96,13 +104,14 @@
 <script lang="ts" setup>
 import axios from 'axios'
 import moment from 'moment'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
 
-import EmptyState from '../components/EmptyState.vue'
-import type { Project } from '../types'
+import EmptyState from '../../components/EmptyState.vue'
+import type { Project } from '../../types'
 
 const route = useRoute()
+const router = useRouter()
 
 const project = ref<Project>(null)
 const isLoadingProject = ref<boolean>(true)
@@ -110,19 +119,14 @@ const isLoading = ref<boolean>(false)
 const selectedEndpoints = ref<number[]>([])
 onMounted(() => fetchProjectDetails())
 
-const onCopy = (e: any) => {
-  alert('You just copied: ' + e.text)
-}
-
-const onError = (e) => {
-  alert('Failed to copy texts')
-}
+const navigateToCreateEndpoint = () =>
+  router.push(`/projects/${route.params.projectId}/endpoints/create`)
 
 const fetchProjectDetails = async (): Promise<void> => {
   isLoadingProject.value = true
   try {
     const response = await axios({
-      url: `http://localhost:8000/api/projects/${route.params.id}`,
+      url: `http://localhost:8000/api/projects/${route.params.projectId}`,
       method: 'GET',
       headers: {
         Authorization: `Bearer 6|HItUkQpazgDEoXyMnrABHVPMkcbQUnn57NhJqt4oaf34f8d2` // Assuming you store the token in localStorage

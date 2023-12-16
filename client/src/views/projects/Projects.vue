@@ -73,9 +73,9 @@
 
 <script lang="ts" setup>
 import axios from 'axios'
-import EmptyState from '../components/EmptyState.vue'
+import EmptyState from '../../components/EmptyState.vue'
 import { ref, onMounted } from 'vue'
-import type { Project } from '../types'
+import type { Project } from '../../types'
 
 const projects = ref<Project[]>([])
 const newProjectName = ref<string>('')

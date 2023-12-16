@@ -1,5 +1,5 @@
 <template>
-  <div class="p-5 my-5 border border-dashed rounded-lg text-center">
+  <div class="p-5 my-5 border border-dashed rounded-lg text-center w-max">
     {{ props.message }}
   </div>
 </template>

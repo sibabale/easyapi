@@ -61,6 +61,12 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::post('/endpoints/fields/value', [FieldValueController::class, 'store']);
     Route::delete('/endpoints/fields/value', [FieldValueController::class, 'destroy']);
 
+    // User friendly
+    Route::get('/{userName}/projects', [ProjectController::class, 'index']);
+    Route::get('/projects/{projectId}/endpoints', [EndpointsController::class, 'index']);
+    Route::get('/endpoints/fields', [EndpointFieldController::class, 'index']);
+    Route::get('/endpoints/fields/values', [FieldValueController::class, 'index']);
+
 });
 
 //App

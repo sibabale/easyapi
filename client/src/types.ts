@@ -6,3 +6,8 @@ export type Project = {
   api_version: number
   description: string
 }
+
+export type Enpoint = {
+  name: string
+  type: null | 'Boolen' | 'Float' | 'Int' | 'Text' | 'varchar(20)' | 'varchar(255)'
+}

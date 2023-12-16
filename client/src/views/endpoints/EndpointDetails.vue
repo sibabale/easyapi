@@ -6,11 +6,19 @@
     </div>
 
     <empty-state v-if="endpointFields.length <= 0" message="You have no fields for this endpoint" />
-    <div class="my-5 rounded-lg border border-gray-200 shadow">
+    <div v-else class="my-5 rounded-lg border border-gray-200 shadow">
       <div class="p-4 flex items-center justify-between">
-        <h2 class="text-xl font-bold">Endpoints Fields</h2>
-        <div v-show="selectedFields.length > 0">
+        <h2 class="text-xl font-bold">Endpoint Fields</h2>
+        <div class="flex items-center">
           <button
+            class="p-2 mr-5 border border-blue-500 flex items-center rounded text-blue-500 text-sm"
+            @click.prevent="navigateToCreateEndpointField"
+          >
+            <span class="material-symbols-outlined text-sm text-blue-500"> add </span>
+            Add new field
+          </button>
+          <button
+            :class="selectedFields.length > 0 ? 'opacity-0' : ''"
             class="p-2 border border-red-500 flex items-center rounded text-red-500 text-sm"
             @click.prevent="deleteEndpointFields"
           >
@@ -24,9 +32,6 @@
         <table class="min-w-full text-left">
           <thead>
             <tr class="border-y">
-              <th class="py-2 px-4">
-                <input type="checkbox" disabled />
-              </th>
               <th class="py-2 px-4" v-for="field in endpointFields" :key="field.id">
                 <div class="flex flex-col">
                   {{ separateAndCapitalize(field.field_attributes.name) }}
@@ -36,12 +41,18 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="border-y last:border-b-0">
-              <td class="py-2 px-4">
-                <!-- <input type="checkbox" v-model="selectedFields" :value="endpointValue.id" /> -->
+            <tr class="my-2 mx-4"></tr>
+            <tr
+              v-if="endpointFields.length > 0 && endpointValues.length <= 0"
+              class="border-y last:border-b-0"
+            >
+              <td class="py-2 px-4" v-for="(item, index) in endpointFields" :key="index">
+                No Value
               </td>
+            </tr>
+            <tr v-else class="border-y last:border-b-0">
               <td class="py-2 px-4" v-for="endpointValue in endpointValues" :key="endpointValue.id">
-                {{ endpointValue.value }}
+                {{ endpointValue.value ? endpointValue.value : 'No value' }}
               </td>
             </tr>
           </tbody>
@@ -53,10 +64,13 @@
 
 <script lang="ts" setup>
 import axios from 'axios'
-import { useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+import EmptyState from '../../components/EmptyState.vue'
 
 const route = useRoute()
+const router = useRouter()
 
 const isLoading = ref<boolean>(false)
 const endpointFields = ref([])
@@ -68,6 +82,12 @@ onMounted(() => {
   fetchEndpointFields()
   fetchEndpointValues()
 })
+
+const navigateToCreateEndpointField = () =>
+  router.push({
+    name: 'CreateEndpointField',
+    params: { projectId: route.params.projectId, endpointId: route.params.endpointId }
+  })
 
 let leadFieldId = Math.min(
   ...endpointValues.value.map((item) => {
