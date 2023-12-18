@@ -38,8 +38,6 @@
         />
       </div>
 
-      <!-- <div v-if="endpointFields.length > 0"> -->
-
       <div class="my-5 rounded-lg border border-gray-200">
         <div class="p-4 flex items-center justify-between">
           <h2 class="text-md font-bold">Fields</h2>

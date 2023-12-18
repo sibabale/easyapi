@@ -6,7 +6,7 @@
         <h1 class="p-5 text-2xl font-bold">Easy API</h1>
         <ul class="px-5">
           <li>
-            <router-link to="/projects">Projects</router-link>
+            <router-link to="/apis">Projects</router-link>
           </li>
         </ul>
       </aside>

@@ -50,8 +50,6 @@
         />
       </div>
 
-      <!-- <div v-if="endpointFields.length > 0"> -->
-
       <div class="my-5 rounded-lg border border-gray-200">
         <div class="p-4 flex items-center justify-between">
           <h2 class="text-md font-bold">Fields</h2>
@@ -114,7 +112,7 @@
 
 <script lang="ts" setup>
 import axios from 'axios'
-import slugify from 'slugify'
+import createSlug from '../../utils/createSlug'
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import type { Enpoint } from '../../types'
@@ -138,11 +136,7 @@ const submitForm = async (): void => {
           Authorization: `Bearer 6|HItUkQpazgDEoXyMnrABHVPMkcbQUnn57NhJqt4oaf34f8d2`
         },
         data: JSON.stringify({
-          name: slugify(endpointName.value, {
-            replacement: '_',
-            lower: true,
-            strict: true
-          }),
+          name: createSlug(endpointName.value, '_'),
           fields: endpointFields.value
         })
       })
@@ -160,27 +154,16 @@ const submitForm = async (): void => {
   }
 }
 const addNewEnpointField = () => {
-  // Check if both field and type are filled before saving
   if (newEndpointField.value.name && newEndpointField.value.type) {
     endpointFields.value.push({
-      name: slugify(newEndpointField.value.name, {
-        replacement: '_',
-        lower: true,
-        strict: true
-      }),
-
+      name: createSlug(newEndpointField.value.name, '_'),
       type: newEndpointField.value.type
     })
 
-    // Reset input fields after saving
     newEndpointField.value.name = ''
     newEndpointField.value.type = null
   } else {
     alert('Please enter both Field and Type before saving.')
   }
 }
-
-// const addNewEnpointField = () => {
-//   endpointFields.value.push(newEndpointField.value)
-// }
 </script>

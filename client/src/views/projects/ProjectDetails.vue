@@ -22,10 +22,17 @@
           >Updated: {{ moment(project.project.updated_at).endOf('day').fromNow() }}</small
         >
       </div>
-      <empty-state
-        v-if="project.project.endpoints <= 0"
-        message="You have no endpoints for this project"
-      />
+      <div v-if="project.project.endpoints <= 0" class="w-full">
+        <empty-state message="You have no endpoints for this project">
+          <button
+            class="p-2 border border-blue-500 flex items-center rounded text-blue-500 text-sm"
+            @click.prevent="navigateToCreateEndpoint"
+          >
+            <span class="material-symbols-outlined text-sm text-blue-500"> add </span>
+            Add new endpoint
+          </button>
+        </empty-state>
+      </div>
 
       <div v-else class="my-5 rounded-lg border border-gray-200">
         <div class="p-4 flex items-center justify-between">
@@ -78,14 +85,18 @@
                 <td class="py-2 px-4">
                   <router-link
                     class="underline text-blue-300"
-                    :to="`/projects/${project.project.id}/endpoints/${endpoint.id}`"
+                    :to="`/apis/${project.project.id}/endpoints/${endpoint.id}`"
                   >
                     {{ endpoint.name }}
                   </router-link>
                 </td>
                 <td class="py-2 px-4">
                   <div class="flex items-center">
-                    <span class="mr-2">http://localhost:8000/api/{{ endpoint.name }}</span>
+                    <span class="mr-2"
+                      >http://localhost:8000/api/{{ project.project.name }}/{{
+                        endpoint.name
+                      }}</span
+                    >
                   </div>
                 </td>
                 <td class="py-2 px-4">GET</td>
@@ -117,10 +128,11 @@ const project = ref<Project>(null)
 const isLoadingProject = ref<boolean>(true)
 const isLoading = ref<boolean>(false)
 const selectedEndpoints = ref<number[]>([])
+
 onMounted(() => fetchProjectDetails())
 
 const navigateToCreateEndpoint = () =>
-  router.push(`/projects/${route.params.projectId}/endpoints/create`)
+  router.push(`/apis/${route.params.projectId}/endpoints/create`)
 
 const fetchProjectDetails = async (): Promise<void> => {
   isLoadingProject.value = true
@@ -162,7 +174,3 @@ const deleteProjects = () => {
   })
 }
 </script>
-
-<style>
-/* Add your styling here */
-</style>

@@ -10,20 +10,20 @@ import CreateEndpointField from '../views/endpoints/CreateEndpointField.vue'
 
 const routes: RouteRecordRaw[] = [
   { path: '/login', component: Login },
-  { path: '/projects', component: Dashboard },
-  { path: '/projects/:projectId', name: 'ProjectDetails', component: ProjectDetails },
-  { path: '/projects/create', component: CreateProject },
+  { path: '/apis', component: Dashboard },
+  { path: '/apis/:projectId', name: 'ProjectDetails', component: ProjectDetails },
+  { path: '/apis/create', component: CreateProject },
   {
-    path: '/projects/:projectId/endpoints/:endpointId',
+    path: '/apis/:projectId/endpoints/:endpointId',
     component: EndpointDetails
   },
   {
-    path: '/projects/:projectId/endpoints/:endpointId/field/create',
+    path: '/apis/:projectId/endpoints/:endpointId/field/create',
     name: 'CreateEndpointField',
     component: CreateEndpointField
   },
   {
-    path: '/projects/:projectId/endpoints/create',
+    path: '/apis/:projectId/endpoints/create',
     component: CreateEndpoint
   }
 ]

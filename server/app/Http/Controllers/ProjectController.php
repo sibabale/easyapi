@@ -76,9 +76,11 @@ class ProjectController extends Controller
 
     }
 
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $project = Project::findOrFail($id);
+        $projectId = $request->input('project_id');
+
+        $project = Project::findOrFail($projectId);
         $project->delete();
 
         return response()->json(null, 204);

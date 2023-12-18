@@ -73,6 +73,7 @@
 <script lang="ts" setup>
 import axios from 'axios'
 import { ref } from 'vue'
+import createSlug from '../../utils/createSlug'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -85,7 +86,7 @@ const projectDescription = ref<string>('')
 
 const submitForm = async (): void => {
   try {
-    const response = await axios({
+    await axios({
       url: 'http://localhost:8000/api/projects',
       method: 'POST',
       headers: {
@@ -93,7 +94,7 @@ const submitForm = async (): void => {
         Authorization: `Bearer 6|HItUkQpazgDEoXyMnrABHVPMkcbQUnn57NhJqt4oaf34f8d2`
       },
       data: JSON.stringify({
-        name: projectName.value,
+        name: createSlug(projectName.value, '-'),
         api_type: apiType.value,
         database: database.value,
         description: projectDescription.value,
@@ -101,7 +102,7 @@ const submitForm = async (): void => {
       })
     })
 
-    setTimeout(() => router.push({ path: '/dashboard' }), 3000)
+    setTimeout(() => router.push({ path: '/apis' }), 3000)
   } catch (error) {
     console.error('Error creating a project: ', error)
   }
