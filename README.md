@@ -1,7 +1,8 @@
 
-# Easy API - Intuitive API Builder & Headless CMS
+# Easy API 
+### Intuitive API Builder & Headless CMS
 
-![Easy API Logo](./client/src/assets/logo.svg)
+
 ****
 Easy API is a web application designed to simplify the process of architecting, managing, and prototyping APIs. It provides a visual interface to build data structures, define endpoints, and manage content without writing repetitive backend code.
 
